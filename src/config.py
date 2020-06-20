@@ -1,0 +1,9 @@
+# MQTT Broker
+
+BROKER_IP = "127.0.0.1"
+BROKER_PORT = 1883
+
+# Redis cache
+REDIS_HOST = "localhost"
+REDIS_PORT = 6379
+REDIS_PASSWORD = ""
