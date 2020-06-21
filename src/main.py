@@ -10,7 +10,7 @@ if __name__ == "__main__":
 	publisher.connect()
 	#Pushing random items
 	item_name = "item" + str(randint(0, 9999999999))
-	publisher.publish_event(item_name)
+	publisher.publish_event("list/mylist", item_name)
 
 	print("Data in cache")
 	cache = CacheManager()

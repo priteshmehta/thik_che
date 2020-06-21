@@ -21,10 +21,10 @@ class EventProducer:
 		# client.connect("127.0.0.1",1883,60)
 		self.mqtt_client.connect(BROKER_IP, BROKER_PORT, 60)
 
-	def publish_event(self, event):
+	def publish_event(self, topic, event):
 		# Publish a message with topic
 		print("Publish")
-		ret = self.mqtt_client.publish("list/mylist", event)
+		ret = self.mqtt_client.publish(topic, event)
 		print("Return:", ret)
 		# Run a loop
 		self.mqtt_client.loop()
