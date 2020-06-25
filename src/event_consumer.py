@@ -36,9 +36,10 @@ def send_response(cmd, arg):
 			print(item)
 			item_str = "{}|{}".format(item["id"], item["name"])
 			print(item_str)
-			#publisher = EventProducer()
-			#publisher.connect()
-			#publisher.publish_event("list/mylist", item_str)
+			publisher = EventProducer()
+			publisher.connect()
+			publisher.publish_event("list/command/res", item_str)
+			publisher.disconnect()
 		except Exception as e:
 			#print("invalid item. Available items are", master_list)
 			print(e)
