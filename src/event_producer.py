@@ -7,7 +7,6 @@ class EventProducer:
 		self.mqtt_client = mqtt.Client(client_id='publisher-1')
 		self.mqtt_client.on_connect = self.connect_msg
 		self.mqtt_client.on_publish = self.publish_msg
-		self.cache = CacheManager()
 
 	def connect_msg(self):
 		print('Connected to Broker')
@@ -17,15 +16,15 @@ class EventProducer:
 		print('Message Published')
 
 	def connect(self):
-		# if you experience Socket error then replace above statement with following one
-		# client.connect("127.0.0.1",1883,60)
 		self.mqtt_client.connect(BROKER_IP, BROKER_PORT, 60)
 
 	def publish_event(self, topic, event):
 		# Publish a message with topic
-		print("Publish")
+		print("Msg published")
 		ret = self.mqtt_client.publish(topic, event)
 		print("Return:", ret)
 		# Run a loop
-		self.mqtt_client.loop()
+		#self.mqtt_client.loop()
 
+	def disconnect(self):
+		self.mqtt_client.disconnect()

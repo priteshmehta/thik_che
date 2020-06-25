@@ -7,7 +7,7 @@ class CacheManager:
         # using the default encoding utf-8.  This is client specific.
         self.r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD, decode_responses=True)
 
-    def set(self, key, value):
+    def push(self, key, value):
         try:
             self.r.lpush(key, value)
         except Exception as e:
