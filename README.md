@@ -14,7 +14,7 @@ sudo systemctl restart mosquitto
 sudo systemctl restart redis.service
 ```
 
-### test pub/sub
+### Test pub/sub
 ```
 To Publish
 mosquitto_pub -h 127.0.0.1 -p 1883 -t {TOPIC} -m {MSG}
@@ -34,7 +34,7 @@ redis-cli lpop {KEY_NAME}
 ```
 
 
-### run even consumer 
+### Run event consumer 
 ```
 python3 src/event_consumer.py 
 ```
