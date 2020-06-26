@@ -14,7 +14,7 @@ def process_message(client, userdata, message):
 		print("topic: {}, message received: {}".format(message.topic, msg_payload))
 		cmd, arg = msg_payload.split("|")
 		print("command: {} arg: {}".format(cmd, arg))
-		cache_log = "timestamp: {}, Command: {}, arg:{}".format(cmd, arg, time.time())
+		cache_log = "{} [message] {}".format(int(time.time()), msg_payload)
 		print("Cache: {}".format(cache_log))
 		cache_client = CacheManager()
 		cache_client.push("commands", cache_log)
