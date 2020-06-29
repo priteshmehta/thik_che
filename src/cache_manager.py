@@ -22,3 +22,6 @@ class CacheManager:
     def print_data(self, key):
         for i in range(0, self.r.llen(key)):
             print(self.r.lindex(key, i))
+
+    def get_list_items(self, key):
+        return [self.r.lindex(key, i) for i in range(0, self.r.llen(key))]
