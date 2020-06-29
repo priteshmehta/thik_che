@@ -61,7 +61,7 @@ def process_message(client, userdata, message):
 		elif cmd == "add_item":
 			for item in master_list:
 				if arg == item["id"]:
-					add_item_mylist(item)
+					add_item_mylist((item["id"], item["name"]))
 	except Exception as e:
 		eventLogger.info("Error in processing message:{}".format(message.payload))
 		eventLogger.error(e)

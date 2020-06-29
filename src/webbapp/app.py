@@ -30,8 +30,9 @@ def hello():
 
 @app.route("/mylist")
 def get_my_list():
-    data = ch.get_list_items("mylist")
-    return str(data)
+    items = ch.get_list_items("mylist")
+    unique_items = set(items)
+    return str(unique_items)
 
 @app.errorhandler(404)
 def not_found(error):
