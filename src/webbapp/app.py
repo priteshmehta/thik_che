@@ -1,7 +1,13 @@
-from flask import Flask, jsonify, make_response, request, abort, render_template
-from db_manager import master_list
 import time
 import logging
+from flask import Flask, jsonify, make_response, request, abort, render_template
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join('..', '')))
+
+from db_manager import master_list
+from cache_manager import CacheManager
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logging.basicConfig(level=logging.INFO)
@@ -11,6 +17,7 @@ logger = logging.getLogger(__name__)
 logger.addHandler(handler)
 
 app = Flask(__name__, static_folder="./static", template_folder="./static")
+ch = CacheManager()
 
 @app.route("/list")
 def get_list():
@@ -20,6 +27,11 @@ def get_list():
 @app.route("/ping")
 def hello():
     return "PONG"
+
+@app.route("/mylist")
+def get_my_list():
+    data = ch.get_list_items("mylist")
+    return str(data)
 
 @app.errorhandler(404)
 def not_found(error):
