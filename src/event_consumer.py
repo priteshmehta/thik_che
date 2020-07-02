@@ -3,7 +3,7 @@ import logging
 import datetime
 
 import paho.mqtt.client as mqtt
-from config import BROKER_IP, BROKER_PORT
+from config import BROKER_IP, BROKER_PORT, device_id
 from cache_manager import CacheManager
 from db_manager import master_list
 from event_producer import EventProducer
@@ -39,13 +39,26 @@ class eventLogger:
 eventLogger = eventLogger('event_consumer_log.log')
 cache_client = CacheManager()
 
-def add_item_mylist(item):
-		"""add item to mylist
+def add_item_mylist(item_id, item_value):
+		"""Add item to mylist
 		"""
 		shopping_list = "mylist"
-		print("Add item to the list:", item)
-		eventLogger.info("Adding item: {} to the:{}".format(item, shopping_list))
-		cache_client.push(shopping_list, str(item))
+		print("Add item to the list:", item_value)
+		eventLogger.info("Adding item: {} to the:{}".format(item_value, shopping_list))
+		key = "{}:{}:{}".format(device_id, shopping_list, item_id)
+		cache_client.set_value(key, str(item_value))
+
+def remove_item(item_id):
+		"""Remove item to mylist
+		"""
+		shopping_list = "mylist"
+		print("Remove item to the list:", item_id)
+		eventLogger.info("Removing item: {} to the:{}".format(item_id, shopping_list))
+		keys = cache_client.get_keys("{}:{}*".format(device_id, shopping_list))
+		for key in keys:
+			if item_id == str(key.split(":")[-1]):
+				cache_client.delete_key(key)
+				break
 
 def process_message(client, userdata, message):
 	"""Process received messages
@@ -61,15 +74,23 @@ def process_message(client, userdata, message):
 		elif cmd == "add_item":
 			for item in master_list:
 				if arg == item["id"]:
-					add_item_mylist((item["id"], item["name"]))
+					add_item_mylist(item["id"], item["name"])
+		elif cmd == "remove_item":
+			remove_item(arg)
+
 	except Exception as e:
 		eventLogger.info("Error in processing message:{}".format(message.payload))
 		eventLogger.error(e)
 
 def on_connect(client, userdata, flags, rc):
-	print("Connected with result code " + str(rc))
-	client.subscribe("list/command")
-
+	if rc != 0:
+		print("Failed to connect. Return code: {}".format(rc))
+		return
+	print("Connected successfully", flags)
+	print("Connected successfully2", userdata)
+	client.subscribe("list/command", 2)
+	#https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/#:~:text=The%20Quality%20of%20Service%20(QoS,Exactly%20once%20(2).
+	#http://www.steves-internet-guide.com/mqtt-username-password-example/
 def send_response(cmd, arg):
 	"""Send response
 	"""
@@ -95,7 +116,11 @@ def send_response(cmd, arg):
 
 if __name__ == "__main__":
 	print("MQTT Event Consumer is running...")
-	mqtt_client = mqtt.Client()
+	mqtt_client = mqtt.Client(client_id="pritesh-client1", clean_session=True)
+	mqtt_client.user_data_set("device_id:12323232")
+	#mqtt_client.enable_logger()
+	#mqtt_client.username_pw_set("abc", "password")
+	mqtt_client.max_inflight_messages_set(100) #Set the maximum number of messages with QoS>0
 	mqtt_client.connect(BROKER_IP, BROKER_PORT, 60)
 	mqtt_client.on_connect = on_connect
 	mqtt_client.on_message = process_message

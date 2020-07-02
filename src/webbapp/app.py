@@ -8,6 +8,7 @@ sys.path.append(os.path.abspath(os.path.join('..', '')))
 
 from db_manager import master_list
 from cache_manager import CacheManager
+from config import device_id
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logging.basicConfig(level=logging.INFO)
@@ -30,13 +31,14 @@ def hello():
 
 @app.route("/mylist", methods=["GET"])
 def get_my_list():
-    items = ch.get_list_items("mylist")
-    unique_items = set(items)
-    return jsonify(str(unique_items))
+    keys = ch.get_keys("{}*".format(device_id))
+    for key in keys:
+        data = {"id": str(key.split(":")[-1]), "name": ch.get_value(key)}
+    return jsonify(str(data))
 
 @app.route("/mylist", methods=["DELETE"])
 def delete_my_list():
-    r = ch.delete_key("mylist")
+    r = ch.delete_key("{}:{}".format(device_id, "mylist"))
     if r != 0:
         print("Failed to delete")
     return jsonify("")
