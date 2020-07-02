@@ -25,3 +25,7 @@ class CacheManager:
 
     def get_list_items(self, key):
         return [self.r.lindex(key, i) for i in range(0, self.r.llen(key))]
+
+
+    def delete_key(self, key):
+        return self.r.delete(key)

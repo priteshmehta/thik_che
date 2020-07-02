@@ -28,11 +28,18 @@ def get_list():
 def hello():
     return "PONG"
 
-@app.route("/mylist")
+@app.route("/mylist", methods=["GET"])
 def get_my_list():
     items = ch.get_list_items("mylist")
     unique_items = set(items)
-    return str(unique_items)
+    return jsonify(str(unique_items))
+
+@app.route("/mylist", methods=["DELETE"])
+def delete_my_list():
+    r = ch.delete_key("mylist")
+    if r != 0:
+        print("Failed to delete")
+    return jsonify("")
 
 @app.errorhandler(404)
 def not_found(error):
